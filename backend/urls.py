@@ -16,24 +16,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-from movies_api import views
-
-router = routers.DefaultRouter()
-
-router.register('genome_tags', views.GenomeTagsAPI)
-
-router.register('links', views.LinksAPI)
-
-router.register('movies', views.MoviesAPI)
-
-router.register('ratings', views.RatingsAPI)
-
-router.register('tags', views.TagsAPI)
-
-router.register('users', views.UsersAPI)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include(router.urls))
+    path('api/', include("movies_api.urls"))
 ]

@@ -1,31 +1,27 @@
-from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .serializers import *
 from .models import *
 
-class GenomeTagsAPI(viewsets.ModelViewSet):
-    serializer_class = GenomeTagsSerializer
-    queryset = GenomeTags.objects.all()[:5]
+
+@api_view(['GET'])
+def MoviesAPI(request):
+
+    if request.method == 'GET':
 
 
-class LinksAPI(viewsets.ModelViewSet):
-    serializer_class = LinksSerializer
-    queryset = Links.objects.all()[:5]
+        year_from = request.GET.get('from')
+        year_to = request.GET.get('to')
 
 
-class MoviesAPI(viewsets.ModelViewSet):
-    serializer_class = MoviesSerializer
-    queryset = Movies.objects.all()[:5]
+        if year_to and year_from:
+            movies = Movies.objects.filter(release_date__range = (year_from+"-01-01", year_to+"-12-31"))
+        else:
+            movies = Movies.objects.all()[:10]
+        serializer = MoviesSerializer(movies, many=True)
 
-class RatingsAPI(viewsets.ModelViewSet):
-    serializer_class = RatingsSerializer
-    queryset = Ratings.objects.all()[:5]
+        return Response(serializer.data)
 
+# https://docs.djangoproject.com/en/3.0/topics/db/queries/
 
-class TagsAPI(viewsets.ModelViewSet):
-    serializer_class = TagsSerializer
-    queryset = Tags.objects.all()[:5]
-
-class UsersAPI(viewsets.ModelViewSet):
-    serializer_class = UsersSerializer
-    queryset = Users.objects.all()[:5]
