@@ -145,10 +145,12 @@ class Movies(models.Model):
     popularity = models.FloatField(blank=True, null=True)
     original_language = models.TextField(blank=True, null=True)
     production_countries = models.TextField(blank=True, null=True)
-    release_date = models.DateField(blank=True, null=True)
+    release_date = models.TextField(blank=True, null=True)
     revenue = models.IntegerField(blank=True, null=True)
     runtime = models.IntegerField(blank=True, null=True)
     adult = models.TextField(blank=True, null=True)
+    vote_average = models.FloatField(blank=True, null=True)
+    vote_count = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -156,15 +158,15 @@ class Movies(models.Model):
 
 
 class Ratings(models.Model):
-    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
+    userid = models.IntegerField(db_column='userId', primary_key=True)  # Field name made lowercase.
     movieid = models.IntegerField(db_column='movieId')  # Field name made lowercase.
-    rating = models.FloatField(blank=True, null=True)
+    rating = models.FloatField()
     timestamp = models.IntegerField(blank=True, null=True)
-    ratingid = models.AutoField(db_column='ratingId', primary_key=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'ratings'
+        unique_together = (('userid', 'movieid'),)
 
 
 class Tags(models.Model):

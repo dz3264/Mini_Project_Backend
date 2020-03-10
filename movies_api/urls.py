@@ -6,6 +6,7 @@ from .views import *
 urlpatterns = [
     path('movies/', MoviesAPI),
     path('movie/<movieid>', MovieDetailAPI, name="details"),
+    path('genres/<genre>', MovieGenres, name="movie_genre"),
     path('rating/<movieid>', RatingAPI, name="movie_ratings"),
     path('ratingby/<userid>', RatingByAPI, name="user_ratings"),
 ]
