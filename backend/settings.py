@@ -29,8 +29,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "192.168.0.13",
     "99.79.10.143",
-    "172.31.95.70",
-    "172.31.63.85",
+    "172.31.1.113",
     "*"
 ]
 
@@ -91,14 +90,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'All_Data',#'MoviesData',#'All_Data',
+        'NAME': 'MoviesData',  # 'MoviesData',#'All_Data',
         'USER': 'root',
-        'PASSWORD': 'password', #'','password',
-        'HOST': 'localhost', # 99.79.10.143
+        'PASSWORD': '9x8p!abM',  # ''password',
+        'HOST': 'localhost',  # 99.79.10.143
         'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
