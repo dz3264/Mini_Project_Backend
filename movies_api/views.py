@@ -163,12 +163,17 @@ def UserAPI(request, userid):
         try:
             user = Users.objects.filter(userid=userid)
             serializer = UsersSerializer(user, many=True)
-            return Response({'data': serializer.data})
+            print(serializer.data[0]['username'])
+            return Response({
+                'data': {"userid": serializer.data[0]['userid'],
+                         "username": serializer.data[0]['username'],
+                         "userhistory": serializer.data[0]['userhistory'],
+                         "usertags": serializer.data[0]['usertags']}})
 
         except Users.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    elif request.method == 'POST':
+    elif request.method == 'POST' and userid == 0:
 
         serializer = UsersSerializer(data=request.data)
 
@@ -177,6 +182,10 @@ def UserAPI(request, userid):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        if request.method == 'POST':
+            return Response({'error': 'Existing UserId, use 0 for POST'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # https://docs.djangoproject.com/en/3.0/topics/db/queries/
