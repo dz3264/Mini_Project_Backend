@@ -1,12 +1,6 @@
 from rest_framework import serializers
 from .models import *
 
-class GenomeTagsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = GenomeTags
-        fields = "__all__"
-
-
 class LinksSerializer(serializers.ModelSerializer):
     class Meta:
         model = Links

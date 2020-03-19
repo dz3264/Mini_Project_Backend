@@ -17,7 +17,7 @@ def MoviesAPI(request):
     if request.method == 'GET':
 
         # Get query params
-        year_from = request.GET.get('from')+"-01-01" if request.GET.get('from') else '1900-01-01'
+        year_from = request.GET.get('from')+"-01-01" if request.GET.get('from') else '1800-01-01'
         year_to = request.GET.get('to')+"-01-01" if request.GET.get('to') else '2100-01-01'
         limit = int(request.GET.get('limit')) if request.GET.get('limit') else DEFAULT_LIMIT
         sort = request.GET.get('sort') if request.GET.get('sort') else 'movieid'
@@ -29,8 +29,7 @@ def MoviesAPI(request):
         'Horror', 'Mystery', 'Sci-Fi', 'IMAX', 'Documentary', 
         'War', 'Musical', 'Western', 'Film-Noir', '(no genres listed)'
         """
-
-        movies = Movies.objects.filter(release_date__range=(year_from, year_to)).order_by(sort)
+        movies = Movies.objects.filter(release_date__range=(year_from, year_to)).filter(genres__contains=genre).order_by(sort)
 
         start = (page-1)*limit
         end = page*limit
@@ -140,6 +139,29 @@ def RatingByAPI(request, userid):
         serializer = RatingsSerializer(ratings, many=True)
 
         return Response({'total_count':len(serializer.data),'data':serializer.data})
+
+@api_view(['GET','POST'])
+def UserAPI(request, userid):
+
+    if request.method == 'GET':
+
+        try:
+            user = Users.objects.filter(userid=userid)
+            serializer = UsersSerializer(user, many=True)
+            return Response({'data': serializer.data})
+
+        except Users.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    elif request.method == 'POST':
+
+        serializer = UsersSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # https://docs.djangoproject.com/en/3.0/topics/db/queries/
