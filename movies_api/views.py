@@ -133,13 +133,13 @@ def RatingAPI(request, movieid):
 
         # if need details of ratings
         detail = True if request.GET.get('detail') else False
-        limit = int(request.GET.get('limit')) if request.GET.get(
-            'limit') else DEFAULT_LIMIT
+        limit = int(request.GET.get('limit')) if request.GET.get('limit') else DEFAULT_LIMIT
         sort = request.GET.get('sort') if request.GET.get('sort') else 'userid'
         movie = Movies.objects.get(movieid=movieid)
         movie_serializer = MoviesSerializer(movie)
 
         print('Set Up :', time.time()-start)
+
 
         try:
             start = time.time()
@@ -165,8 +165,8 @@ def RatingAPI(request, movieid):
                 movie_rating = {
                     'movieId': movieid,
                     'movieTitle': movie_serializer.data['title'],
-                    'userId': [],
-                    'ratings': [],
+                    'userId':[],
+                    'ratings':[],
                 }
                 userId = []
                 ratings = []
@@ -181,24 +181,32 @@ def RatingAPI(request, movieid):
 
                 print('Listing data :', time.time() - start)
 
+
+
         except Ratings.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        return Response({  # 'movieId': movieid,
-            # 'movieTitle': movie_serializer.data['title'],
-            # 'total_count': len(serializer.data),
-            # 'average': average['rating__avg'],
-            # 'detail': detail,
-            'data': movies_ratings if detail else ratings_count})
+        return Response({'movieId': movieid,
+                         'movieTitle': movie_serializer.data['title'],
+                         'total_count': len(serializer.data),
+                         'average': average['rating__avg'],
+                         'detail': detail,
+                         'data': movies_ratings if detail else ratings_count})
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET','POST'])
 def RatingByAPI(request, userid):
 
     if request.method == 'GET':
 
+        movie = request.GET.get('movie') if request.GET.get('movie') else ''
+
         try:
-            ratings = Ratings.objects.filter(userid=userid)
+            if movie:
+                ratings = Ratings.objects.filter(userid=userid).filter(movieid=movie)
+
+            else:
+                ratings = Ratings.objects.filter(userid=userid)
 
         except Ratings.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -209,40 +217,41 @@ def RatingByAPI(request, userid):
 
     if request.method == 'POST':
 
-        rating = Ratings.objects.filter(
-            userid=request.data['userid'], movieid=request.data['movieid'])
+        rating = Ratings.objects.filter(userid=request.data['userid'], movieid=request.data['movieid'])
         check = RatingsSerializer(rating, many=True)
 
         if not check.data:
             print('new rating')
-
+            request.data['timestamp'] = int(time.time())
             serializer = RatingsSerializer(data=request.data)
+            print(serializer)
 
             if serializer.is_valid():
                 serializer.save()
                 return Response({
-                    'information': 'Create New Rating',
-                    'data': serializer.data}, status=status.HTTP_201_CREATED)
+                    'information':'Create New Rating',
+                    'data':serializer.data}, status=status.HTTP_201_CREATED)
 
             else:
+                print('serializer wrong')
                 return Response('Invalid Serializer', status=status.HTTP_400_BAD_REQUEST)
 
         else:
             print('update rating')
-            rating = Ratings.objects.get(
-                userid=request.data['userid'], movieid=request.data['movieid'])
+            rating = Ratings.objects.get(userid=request.data['userid'], movieid=request.data['movieid'])
             rating.rating = request.data['rating']
             rating.timestamp = request.data['timestamp']
             rating.save()
+        
 
             return Response({
                 'information': 'Update Rating',
-                'data': {
-                    "userid": rating.userid,
-                    "movieid": rating.movieid,
-                    "rating": rating.rating,
-                    "timestamp": rating.timestamp
-                }}, status=status.HTTP_201_CREATED)
+                'data':{
+                "userid": rating.userid,
+                "movieid": rating.movieid,
+                "rating": rating.rating,
+                "timestamp": rating.timestamp
+            }}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST'])
@@ -253,7 +262,7 @@ def UserAPI(request, userid):
         try:
             user = Users.objects.filter(userid=userid)
             serializer = UsersSerializer(user, many=True)
-            print(serializer.data[0]['username'])
+
             return Response({
                 'data': {"userid": serializer.data[0]['userid'],
                          "username": serializer.data[0]['username'],
@@ -263,16 +272,17 @@ def UserAPI(request, userid):
         except Users.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+
+
     if request.method == 'POST':
 
         try:
             user = Users.objects.get(userid=userid)
 
-            if not user.userhistory:
+            if not user.userhistory :
                 user.userhistory = {}
 
-            movie = request.GET.get(
-                'movie') if request.GET.get('movie') else ''
+            movie = request.GET.get('movie') if request.GET.get('movie') else ''
 
             capacity = 20
 
@@ -288,7 +298,7 @@ def UserAPI(request, userid):
                         history.append((value_t, key_m))
 
                     heapq.heapify(history)
-                    print("history: ", history)
+                    print("history: ",history)
 
                     if len(history) >= capacity:
                         # pop the smallest time which is oldest one
@@ -327,6 +337,7 @@ def Login(request):
 
     if request.method == 'POST':
 
+
         try:
             user = Users.objects.filter(username=request.data['username'])
             serializer = UsersSerializer(user, many=True)
@@ -336,12 +347,15 @@ def Login(request):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             else:
                 return Response({"userid": serializer.data[0]['userid'],
-                                 "username": serializer.data[0]['username'],
-                                 "userhistory": serializer.data[0]['userhistory'],
-                                 "usertags": serializer.data[0]['usertags']})
+                             "username": serializer.data[0]['username'],
+                             "userhistory": serializer.data[0]['userhistory'],
+                             "usertags": serializer.data[0]['usertags']})
 
         except Users.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 
 # https://docs.djangoproject.com/en/3.0/topics/db/queries/
