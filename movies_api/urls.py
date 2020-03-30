@@ -10,4 +10,6 @@ urlpatterns = [
     path('rating/<movieid>', RatingAPI, name="movie_ratings"),
     path('ratingby/<userid>', RatingByAPI, name="user_ratings"),
     path('user/<userid>', UserAPI, name="user"),
+    path('register/', Register, name="register"),
+    path('login/', Login, name="login"),
 ]

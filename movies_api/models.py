@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django_mysql.models import JSONField
+from django_mysql.models import JSONField, Model
 
 
 class AuthGroup(models.Model):
@@ -156,7 +156,9 @@ class Movies(models.Model):
 
 class Ratings(models.Model):
     # Field name made lowercase.
-    userid = models.IntegerField(db_column='userId', primary_key=True)
+    ratingid = models.AutoField(db_column='ratingId', primary_key=True)
+    # Field name made lowercase.
+    userid = models.IntegerField(db_column='userId')
     # Field name made lowercase.
     movieid = models.IntegerField(db_column='movieId')
     rating = models.FloatField()
@@ -165,7 +167,6 @@ class Ratings(models.Model):
     class Meta:
         managed = False
         db_table = 'ratings'
-        unique_together = (('userid', 'movieid'),)
 
 
 class Tags(models.Model):
