@@ -36,7 +36,10 @@ def RecommandAPI(request, userid):
         newmovieId = [ r[5] for r in rows]
         newrating =[ r[3] for r in rows]
 
-        rec_rating_id = make_rec(newmovieId, newrating)
+        if(len(newmovieId) == 0):
+            rec_rating_id = []
+        else:
+            rec_rating_id = make_rec(newmovieId, newrating)
 
         # recommand by history
         try:
@@ -53,7 +56,7 @@ def RecommandAPI(request, userid):
         except Users.DoesNotExist:
             rec_history_id = []
 
-        rec_movies_id = list(rec_rating_id) + list(rec_history_id)
+        rec_movies_id = set(list(rec_rating_id) + list(rec_history_id))
         #print(rec_movies_id)
         rec_movies = []
 
