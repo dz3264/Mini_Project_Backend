@@ -6,7 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django_mysql.models import JSONField
+from django_mysql.models import JSONField, Model
 
 
 class AuthGroup(models.Model):
@@ -81,8 +81,7 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.PositiveSmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey(
-        'DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
@@ -121,12 +120,9 @@ class DjangoSession(models.Model):
 
 
 class Links(models.Model):
-    # Field name made lowercase.
-    movieid = models.IntegerField(db_column='movieId', primary_key=True)
-    # Field name made lowercase.
-    imdbid = models.CharField(db_column='imdbId', max_length=50)
-    # Field name made lowercase.
-    tmdbid = models.CharField(db_column='tmdbId', max_length=50)
+    movieid = models.IntegerField(db_column='movieId', primary_key=True)  # Field name made lowercase.
+    imdbid = models.CharField(db_column='imdbId', max_length=50)  # Field name made lowercase.
+    tmdbid = models.CharField(db_column='tmdbId', max_length=50)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -134,8 +130,7 @@ class Links(models.Model):
 
 
 class Movies(models.Model):
-    # Field name made lowercase.
-    movieid = models.IntegerField(db_column='movieId', primary_key=True)
+    movieid = models.IntegerField(db_column='movieId', primary_key=True)  # Field name made lowercase.
     title = models.TextField()
     genres = models.TextField(blank=True, null=True)
     tmdb = models.IntegerField(blank=True, null=True)
@@ -155,28 +150,23 @@ class Movies(models.Model):
 
 
 class Ratings(models.Model):
-    # Field name made lowercase.
-    userid = models.IntegerField(db_column='userId', primary_key=True)
-    # Field name made lowercase.
-    movieid = models.IntegerField(db_column='movieId')
+    ratingid = models.AutoField(db_column='ratingId', primary_key=True)  # Field name made lowercase.
+    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
+    movieid = models.IntegerField(db_column='movieId')  # Field name made lowercase.
     rating = models.FloatField()
     timestamp = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'ratings'
-        unique_together = (('userid', 'movieid'),)
 
 
 class Tags(models.Model):
-    # Field name made lowercase.
-    userid = models.IntegerField(db_column='userId')
-    # Field name made lowercase.
-    movieid = models.IntegerField(db_column='movieId')
+    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
+    movieid = models.IntegerField(db_column='movieId')  # Field name made lowercase.
     tag = models.TextField()
     timestamp = models.IntegerField()
-    # Field name made lowercase.
-    tagid = models.AutoField(db_column='tagId', primary_key=True)
+    tagid = models.AutoField(db_column='tagId', primary_key=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -184,16 +174,11 @@ class Tags(models.Model):
 
 
 class Users(models.Model):
-    # Field name made lowercase.
-    userid = models.AutoField(db_column='userId', primary_key=True)
-    # Field name made lowercase.
-    username = models.CharField(db_column='userName', max_length=45)
-    # Field name made lowercase.
-    userpass = models.CharField(db_column='userPass', max_length=45)
-    # Field name made lowercase. This field type is a guess.
-    userhistory = JSONField(db_column='userHistory', blank=True, null=True)
-    # Field name made lowercase. This field type is a guess.
-    usertags = JSONField(db_column='userTags', blank=True, null=True)
+    userid = models.AutoField(db_column='userId', primary_key=True)  # Field name made lowercase.
+    username = models.CharField(db_column='userName', max_length=45)  # Field name made lowercase.
+    userpass = models.CharField(db_column='userPass', max_length=45)  # Field name made lowercase.
+    userhistory = JSONField(db_column='userHistory', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
+    usertags = JSONField(db_column='userTags', blank=True, null=True)  # Field name made lowercase. This field type is a guess.
 
     class Meta:
         managed = False
