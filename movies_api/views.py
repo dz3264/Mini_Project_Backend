@@ -6,8 +6,8 @@ from django.db import connection
 import numpy as np
 from .serializers import *
 from .models import *
-from .movie_rec_website.example_norating import make_norating_rec
-from .movie_rec_website.example2 import make_rec
+from .movie_rec.example_norating import make_norating_rec
+from .movie_rec.example2 import make_rec
 
 import heapq
 import time
