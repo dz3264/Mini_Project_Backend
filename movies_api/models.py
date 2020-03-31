@@ -150,9 +150,12 @@ class Movies(models.Model):
 
 
 class Ratings(models.Model):
-    ratingid = models.AutoField(db_column='ratingId', primary_key=True)  # Field name made lowercase.
-    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
-    movieid = models.IntegerField(db_column='movieId')  # Field name made lowercase.
+    # Field name made lowercase.
+    ratingid = models.AutoField(db_column='ratingId', primary_key=True)
+    # Field name made lowercase.
+    userid = models.IntegerField(db_column='userId')
+    # Field name made lowercase.
+    movieid = models.IntegerField(db_column='movieId')
     rating = models.FloatField()
     timestamp = models.IntegerField(blank=True, null=True)
 
